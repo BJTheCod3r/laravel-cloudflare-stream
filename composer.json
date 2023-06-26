@@ -1,0 +1,39 @@
+{
+    "name": "bjthecod3r/laravel-cloudflare-stream",
+    "description": "A Laravel package for Cloudflare Stream.",
+    "keywords": [
+        "php",
+        "laravel",
+        "Open Source",
+        "stream",
+        "videos",
+        "Laravel 10"
+    ],
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Bjthecod3r\\CloudflareStream\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Bolaji Ajani",
+            "email": "fabulousbj@hotmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^10.0.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CloudflareStreamServiceProvider"
+            ],
+            "aliases": {
+                "CloudflareStream": "Bjthecod3r\\CloudflareStream\\Facades\\CloudflareStream"
+            }
+        }
+    }
+}
