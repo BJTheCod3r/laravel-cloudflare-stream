@@ -29,7 +29,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "CloudflareStreamServiceProvider"
+                "Bjthecod3r\\CloudflareStream\\CloudflareStreamServiceProvider"
             ],
             "aliases": {
                 "CloudflareStream": "Bjthecod3r\\CloudflareStream\\Facades\\CloudflareStream"
