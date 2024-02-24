@@ -232,6 +232,20 @@ class CloudflareStream
     }
 
     /**
+     * Update video meta
+     *
+     * @param string $id
+     * @param array $meta
+     * @return array
+     */
+    public function updateMeta(string $id, array $meta = []): array
+    {
+        return $this->http->post("{$this->baseUrl}/{$this->accountId}/stream/{$id}", [
+            'meta' => $meta
+        ])->json();
+    }
+
+    /**
      * Delete video
      *
      * @param string $id
