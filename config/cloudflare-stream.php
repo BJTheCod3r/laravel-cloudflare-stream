@@ -66,6 +66,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Base Delivery URL
+    |--------------------------------------------------------------------------
+    | This is the cloudflare Base delivery URL used when self-signing tokens
+    |
+    */
+    'base_delivery_url' => env('CLOUDFLARE_BASE_DELIVERY_URL', 'https://customer-<customer_id>.cloudflarestream.com'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Options
     |--------------------------------------------------------------------------
     | This is the default options that will be applied to all upload
