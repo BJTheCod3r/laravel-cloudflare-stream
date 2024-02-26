@@ -215,7 +215,7 @@ class CloudflareStream
      */
     public function subscribeToWebhookNotifications(string $notification_url): array
     {
-        return $this->http->post("{$this->baseUrl}/{$this->accountId}/stream/webhook", [
+        return $this->http->put("{$this->baseUrl}/{$this->accountId}/stream/webhook", [
             'notificationUrl' => $notification_url
         ])->json();
     }
