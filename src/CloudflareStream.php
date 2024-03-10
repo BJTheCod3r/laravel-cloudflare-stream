@@ -232,6 +232,26 @@ class CloudflareStream
     }
 
     /**
+     * Clip a video
+     *
+     * @param string $id
+     * @return array
+     * @param array $options
+     */
+    public function clip(string $id, array $options = []): array
+    {
+        $payload = [
+            'clippedFromVideoUID' => $id
+        ];
+
+        if (!empty($options = array_merge($this->prepareData($options), $this->prepareData($this->defaultOptions)))) {
+            $payload = array_merge($payload, $options);
+        }
+
+        return $this->http->post("{$this->baseUrl}/{$this->accountId}/stream/clip", $payload);
+    }
+
+    /**
      * Delete video
      *
      * @param string $id
