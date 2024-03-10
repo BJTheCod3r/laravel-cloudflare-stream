@@ -221,6 +221,23 @@ class CloudflareStream
     }
 
     /**
+     * List videos
+     *
+     * @return array
+     */
+    public function indexVideos(array $query = []): array
+    {
+        $defaultQuery = [
+            'include_counts' => 'true',
+        ];
+
+        $query = array_merge($defaultQuery, $query);
+        $query = http_build_query($query);
+
+        return $this->http->get("{$this->baseUrl}/{$this->accountId}/stream?$query")->json();
+    }
+
+    /**
      * Fetch video details
      *
      * @param string $id
