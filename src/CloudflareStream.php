@@ -67,6 +67,11 @@ class CloudflareStream
     private string $baseUrl;
 
     /**
+     * @var string
+     */
+    private string $baseDeliveryUrl;
+
+    /**
      * @var object
      */
     private object $http;
@@ -79,6 +84,9 @@ class CloudflareStream
         $this->setApiToken();
         $this->setAccountId();
         $this->setBaseUrl();
+        $this->setBaseDeliveryUrl();
+        $this->setKeyId();
+        $this->setPem();
         $this->setDefaultOptions();
         $this->setHttpOptions();
     }
@@ -400,5 +408,57 @@ class CloudflareStream
     private function setPem(): void
     {
         $this->pem = config('cloudflare-stream.pem');
+    }
+
+    /**
+     * Set base delivery URL
+     *
+     * @return void
+     */
+    private function setBaseDeliveryUrl(): void
+    {
+        $this->baseDeliveryUrl = config('cloudflare-stream.base_delivery_url');
+    }
+
+    /**
+     * Get the signed url for playback
+     *
+     * @param string $id
+     * @param int $expiresIn
+     * @return array
+     */
+    public function getSignedUrl(string $id, int $expiresIn = 3600)
+    {
+        $token =  $this->signToken($id, $expiresIn);
+        return [
+            'hls' => "$this->baseDeliveryUrl/$token/manifest/video.m3u8",
+            'dash' => "$this->baseDeliveryUrl/$token/manifest/video.mpd"
+        ];
+    }
+
+    private function signToken(string $uid, string $exp = null)
+    {
+        $privateKey = base64_decode($this->pem);
+
+        $header = ['alg' => 'RS256', 'kid' => $this->keyId];
+        $payload = ['sub' => $uid, 'kid' => $this->keyId];
+
+        if ($exp) {
+            $payload['exp'] = time() + $exp;
+        }
+
+        $encodedHeader = self::base64Url(json_encode($header));
+        $encodedPayload = self::base64Url(json_encode($payload));
+
+        openssl_sign("$encodedHeader.$encodedPayload", $signature, $privateKey, 'RSA-SHA256');
+
+        $encodedSignature = self::base64Url($signature);
+
+        return "$encodedHeader.$encodedPayload.$encodedSignature";
+    }
+
+    private function base64Url(string $data)
+    {
+        return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data));
     }
 }
