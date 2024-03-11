@@ -215,9 +215,26 @@ class CloudflareStream
      */
     public function subscribeToWebhookNotifications(string $notification_url): array
     {
-        return $this->http->post("{$this->baseUrl}/{$this->accountId}/stream/webhook", [
+        return $this->http->put("{$this->baseUrl}/{$this->accountId}/stream/webhook", [
             'notificationUrl' => $notification_url
         ])->json();
+    }
+
+    /**
+     * List videos
+     *
+     * @return array
+     */
+    public function indexVideos(array $query = []): array
+    {
+        $defaultQuery = [
+            'include_counts' => 'true',
+        ];
+
+        $query = array_merge($defaultQuery, $query);
+        $query = http_build_query($query);
+
+        return $this->http->get("{$this->baseUrl}/{$this->accountId}/stream?$query")->json();
     }
 
     /**
@@ -243,6 +260,26 @@ class CloudflareStream
         return $this->http->post("{$this->baseUrl}/{$this->accountId}/stream/{$id}", [
             'meta' => $meta
         ])->json();
+    }
+  
+    /**
+     * Clip a video
+     *
+     * @param string $id
+     * @return array
+     * @param array $options
+     */
+    public function clip(string $id, array $options = []): array
+    {
+        $payload = [
+            'clippedFromVideoUID' => $id
+        ];
+
+        if (!empty($options = array_merge($this->prepareData($options), $this->prepareData($this->defaultOptions)))) {
+            $payload = array_merge($payload, $options);
+        }
+
+        return $this->http->post("{$this->baseUrl}/{$this->accountId}/stream/clip", $payload)->json();
     }
 
     /**
