@@ -68,12 +68,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Base Delivery URL
+    | Customer Domain
     |--------------------------------------------------------------------------
-    | This is the cloudflare Base delivery URL used when self-signing tokens
+    | The domain that handles all request
     |
     */
-    'base_delivery_url' => env('CLOUDFLARE_BASE_DELIVERY_URL', 'https://customer-<customer_id>.cloudflarestream.com'),
+    'customer_domain' => env('CLOUDFLARE_CUSTOMER_DOMAIN', 'https://customer-<customer_id>.cloudflarestream.com'),
 
     /*
     |--------------------------------------------------------------------------
