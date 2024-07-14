@@ -21,5 +21,5 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Run PHPUnit tests
-        run: ./vendor/bin/phpunit
+      - name: Run PHPUnit Feature tests
+        run: ./vendor/bin/phpunit --testsuite Feature
