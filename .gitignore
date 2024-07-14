@@ -2,3 +2,6 @@ build
 vendor
 composer.lock
 .idea
+.env
+workbench/.env
+.phpunit.result.cache

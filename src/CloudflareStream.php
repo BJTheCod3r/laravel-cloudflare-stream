@@ -2,6 +2,7 @@
 
 namespace Bjthecod3r\CloudflareStream;
 
+use Bjthecod3r\CloudflareStream\Params\QueryParams;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -69,7 +70,7 @@ class CloudflareStream
     /**
      * @var string
      */
-    private string $baseDeliveryUrl;
+    private string $customerDomain;
 
     /**
      * @var object
@@ -84,7 +85,7 @@ class CloudflareStream
         $this->setApiToken();
         $this->setAccountId();
         $this->setBaseUrl();
-        $this->setBaseDeliveryUrl();
+        $this->setCustomerDomain();
         $this->setKeyId();
         $this->setPem();
         $this->setDefaultOptions();
@@ -231,18 +232,16 @@ class CloudflareStream
     /**
      * List videos
      *
+     * @param QueryParams|array $query
      * @return array
      */
-    public function indexVideos(array $query = []): array
+    public function listVideos(QueryParams|array $query = []): array
     {
-        $defaultQuery = [
-            'include_counts' => 'true',
-        ];
+        if ($query instanceof QueryParams) {
+            $query = $query->toArray();
+        }
 
-        $query = array_merge($defaultQuery, $query);
-        $query = http_build_query($query);
-
-        return $this->http->get("{$this->baseUrl}/{$this->accountId}/stream?$query")->json();
+        return $this->http->get("{$this->baseUrl}/{$this->accountId}/stream", $query)->json();
     }
 
     /**
@@ -269,7 +268,7 @@ class CloudflareStream
             'meta' => $meta
         ])->json();
     }
-  
+
     /**
      * Clip a video
      *
@@ -411,13 +410,13 @@ class CloudflareStream
     }
 
     /**
-     * Set base delivery URL
+     * Set customer domain
      *
      * @return void
      */
-    private function setBaseDeliveryUrl(): void
+    private function setCustomerDomain(): void
     {
-        $this->baseDeliveryUrl = config('cloudflare-stream.base_delivery_url');
+        $this->customerDomain = config('cloudflare-stream.customer_domain');
     }
 
     /**
@@ -427,37 +426,46 @@ class CloudflareStream
      * @param int $expiresIn
      * @return array
      */
-    public function getSignedUrl(string $id, int $expiresIn = 3600)
+    public function getSignedUrl(string $id, int $expiresIn = 3600): array
     {
         $token =  $this->signToken($id, $expiresIn);
         return [
-            'hls' => "$this->baseDeliveryUrl/$token/manifest/video.m3u8",
-            'dash' => "$this->baseDeliveryUrl/$token/manifest/video.mpd"
+            'hls' => "$this->customerDomain/$token/manifest/video.m3u8",
+            'dash' => "$this->customerDomain/$token/manifest/video.mpd"
         ];
     }
 
-    private function signToken(string $uid, string $exp = null)
+    /**
+     * @param string $uid
+     * @param int|null $exp
+     * @return string
+     */
+    private function signToken(string $uid, int $exp = null): string
     {
         $privateKey = base64_decode($this->pem);
 
         $header = ['alg' => 'RS256', 'kid' => $this->keyId];
         $payload = ['sub' => $uid, 'kid' => $this->keyId];
 
-        if ($exp) {
+        if (!is_null($exp)) {
             $payload['exp'] = time() + $exp;
         }
 
-        $encodedHeader = self::base64Url(json_encode($header));
-        $encodedPayload = self::base64Url(json_encode($payload));
+        $encodedHeader = $this->base64Url(json_encode($header));
+        $encodedPayload = $this->base64Url(json_encode($payload));
 
         openssl_sign("$encodedHeader.$encodedPayload", $signature, $privateKey, 'RSA-SHA256');
 
-        $encodedSignature = self::base64Url($signature);
+        $encodedSignature = $this->base64Url($signature);
 
         return "$encodedHeader.$encodedPayload.$encodedSignature";
     }
 
-    private function base64Url(string $data)
+    /**
+     * @param string $data
+     * @return string
+     */
+    private function base64Url(string $data): string
     {
         return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data));
     }
