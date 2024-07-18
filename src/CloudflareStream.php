@@ -428,7 +428,7 @@ class CloudflareStream
      */
     public function getSignedUrl(string $id, int $expiresIn = 3600): array
     {
-        $token =  $this->signToken($id, $expiresIn);
+        $token =  $this->getLocallySignedToken($id, $expiresIn);
         return [
             'hls' => "$this->customerDomain/$token/manifest/video.m3u8",
             'dash' => "$this->customerDomain/$token/manifest/video.mpd"
@@ -440,7 +440,7 @@ class CloudflareStream
      * @param int|null $exp
      * @return string
      */
-    private function signToken(string $uid, int $exp = null): string
+    public function getLocallySignedToken(string $uid, int $exp = null): string
     {
         $privateKey = base64_decode($this->pem);
 
