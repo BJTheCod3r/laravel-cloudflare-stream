@@ -13,13 +13,6 @@ class CloudflareStreamTest extends TestCase
 
     protected string $accountId;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->apiBaseUrl = config('cloudflare-stream.base_url');
-        $this->accountId = config('cloudflare-stream.account_id');
-    }
-
     /**
      * @return void
      */
@@ -294,5 +287,12 @@ class CloudflareStreamTest extends TestCase
         $stream = new CloudflareStream();
         $response = $stream->getStreamSignedToken($id);
         $this->assertEquals($fakeResponse['result']['token'], $response['result']['token']);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->apiBaseUrl = config('cloudflare-stream.base_url');
+        $this->accountId = config('cloudflare-stream.account_id');
     }
 }
