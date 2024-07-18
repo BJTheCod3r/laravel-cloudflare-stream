@@ -59,7 +59,7 @@ gladly attend to it.
 
 ## Todo
 
-* Add Tests
+* Improve tests
 * Add the remaining useful features available on Cloudflare Stream
 
 ## Contributing
