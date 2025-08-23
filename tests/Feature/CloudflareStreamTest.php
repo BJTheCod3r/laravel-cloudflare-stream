@@ -315,26 +315,24 @@ class CloudflareStreamTest extends TestCase
 
         $listVideos = [
             'result' => [
-                'videos' => [
-                    $videoItem,
-                    [
-                        'uid' => 'dup1',
-                        'meta' => ['name' => $name],
-                        'size' => $size,
-                        'duration' => $duration,
-                    ],
-                    [
-                        'uid' => 'nonmatch1',
-                        'meta' => ['name' => $name],
-                        'size' => $size + 1,
-                        'duration' => $duration,
-                    ],
-                    [
-                        'uid' => 'nonmatch2',
-                        'meta' => ['name' => 'different'],
-                        'size' => $size,
-                        'duration' => $duration,
-                    ],
+                $videoItem,
+                [
+                    'uid' => 'dup1',
+                    'meta' => ['name' => $name],
+                    'size' => $size,
+                    'duration' => $duration,
+                ],
+                [
+                    'uid' => 'nonmatch1',
+                    'meta' => ['name' => $name],
+                    'size' => $size + 1,
+                    'duration' => $duration,
+                ],
+                [
+                    'uid' => 'nonmatch2',
+                    'meta' => ['name' => 'different'],
+                    'size' => $size,
+                    'duration' => $duration,
                 ],
             ],
             'success' => true,
@@ -357,7 +355,7 @@ class CloudflareStreamTest extends TestCase
         $stream = new CloudflareStream();
         $duplicates = $stream->findExactDuplicates($id);
 
-        $this->assertCount(1, $duplicates);
-        $this->assertEquals('dup1', $duplicates[0]['uid']);
+        $this->assertSame(1, $duplicates['total']);
+        $this->assertEquals('dup1', $duplicates['result'][0]['uid']);
     }
 }
