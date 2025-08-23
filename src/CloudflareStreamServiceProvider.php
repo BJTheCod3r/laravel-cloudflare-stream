@@ -6,8 +6,10 @@ use Illuminate\Support\ServiceProvider;
 
 class CloudflareStreamServiceProvider extends ServiceProvider
 {
-
-    public function register()
+    /**
+     * @return void
+     */
+    public function register(): void
     {
         $this->app->singleton('cloudflare-stream', function () {
             return new CloudflareStream();

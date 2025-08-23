@@ -2,6 +2,8 @@
 
 namespace Bjthecod3r\CloudflareStream\Params;
 
+use Bjthecod3r\CloudflareStream\Enums\VideoStatus;
+
 /**
  * During usage, all null properties will be ignored.
  *
@@ -57,9 +59,9 @@ class VideoQueryParams extends QueryParams
      * Specifies the processing status for all quality levels for a video.
      * Allowed values: pendingupload, downloading, queued, inprogress, ready, error
      *
-     * @var string|null
+     * @var VideoStatus|null
      */
-    public ?string $status = null;
+    public ?VideoStatus $status = null;
 
     /**
      * Specifies whether the video is vod or live.
@@ -68,4 +70,18 @@ class VideoQueryParams extends QueryParams
      * @var string|null
      */
     public ?string $type = null;
+
+    /**
+     * Override toArray to serialize enums properly.
+     */
+    public function toArray(): array
+    {
+        $array = parent::toArray();
+
+        if ($this->status instanceof VideoStatus) {
+            $array['status'] = $this->status->value;
+        }
+
+        return $array;
+    }
 }

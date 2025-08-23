@@ -3,6 +3,7 @@
 namespace Bjthecod3r\CloudflareStream;
 
 use Bjthecod3r\CloudflareStream\Params\QueryParams;
+use Bjthecod3r\CloudflareStream\Params\VideoQueryParams;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -232,10 +233,10 @@ class CloudflareStream
     /**
      * List videos
      *
-     * @param QueryParams|array $query
+     * @param VideoQueryParams|array $query
      * @return array
      */
-    public function listVideos(QueryParams|array $query = []): array
+    public function listVideos(VideoQueryParams|array $query = []): array
     {
         if ($query instanceof QueryParams) {
             $query = $query->toArray();
@@ -273,8 +274,8 @@ class CloudflareStream
      * Clip a video
      *
      * @param string $id
-     * @return array
      * @param array $options
+     * @return array
      */
     public function clip(string $id, array $options = []): array
     {
@@ -428,7 +429,7 @@ class CloudflareStream
      */
     public function getSignedUrl(string $id, int $expiresIn = 3600): array
     {
-        $token =  $this->getLocallySignedToken($id, $expiresIn);
+        $token = $this->getLocallySignedToken($id, $expiresIn);
         return [
             'hls' => "$this->customerDomain/$token/manifest/video.m3u8",
             'dash' => "$this->customerDomain/$token/manifest/video.mpd"
@@ -468,5 +469,60 @@ class CloudflareStream
     private function base64Url(string $data): string
     {
         return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data));
+    }
+
+    /**
+     * Find exact duplicate videos by using the name of a given video ID and filtering
+     * by identical name, size and duration. The original video (by ID) is excluded.
+     *
+     * @param string $id The UID of the reference video
+     * @param int|null $limit Optional limit for the number of duplicates to return
+     * @return array<int|string, int|array<string,mixed>> Array of duplicate video items
+     */
+    public function findExactDuplicates(string $id, ?int $limit = null): array
+    {
+        $originalResponse = $this->fetchVideo($id);
+        $original = $originalResponse['result'] ?? null;
+
+        if (is_null($original) || empty($original['meta']['name'])) {
+            return [];
+        }
+
+        $name = $original['meta']['name'];
+        $size = $original['size'] ?? null;
+        $duration = $original['duration'] ?? null;
+
+        // Search by name first using listVideos search over meta.name
+        $videosResponse = $this->listVideos(['search' => $name]);
+        $candidates = $videosResponse['result'] ?? [];
+
+        if (!is_array($candidates)) {
+            return [];
+        }
+
+        $duplicates = array_values(array_filter($candidates, function ($video) use ($id, $name, $size, $duration) {
+            if (!is_array($video)) {
+                return false;
+            }
+
+            // Exclude the same video UID
+            if (($video['uid'] ?? null) === $id) {
+                return false;
+            }
+
+            $sameName = ($video['meta']['name'] ?? null) === $name;
+
+            // Some responses might not include size/duration during processing; ensure strict match when available
+            $sameSize = !(array_key_exists('size', $video) && !is_null($size)) || $video['size'] === $size;
+            $sameDuration = !(array_key_exists('duration', $video) && !is_null($duration)) || $video['duration'] === $duration;
+
+            return $sameName && $sameSize && $sameDuration;
+        }));
+
+        if (!is_null($limit) && $limit >= 0) {
+            $duplicates = array_slice($duplicates, 0, $limit);
+        }
+
+        return ['result' => $duplicates, 'total' => count($duplicates)];
     }
 }

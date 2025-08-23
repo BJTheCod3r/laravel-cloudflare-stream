@@ -1,3 +1,16 @@
+<p align="center">
+  <img src="./art/laravel-cloudflare-stream.png" width="200" alt="Laravel Cloudflare Stream Logo" />
+</p>
+
+<p align="center">
+  <a href="https://github.com/BJTheCod3r/laravel-cloudflare-stream/actions"><img src="https://github.com/BJTheCod3r/laravel-cloudflare-stream/actions/workflows/tests.yml/badge.svg" alt="Build Status"></a>
+  <a href="https://packagist.org/packages/bjthecod3r/laravel-cloudflare-stream/stats"><img src="https://poser.pugx.org/bjthecod3r/laravel-cloudflare-stream/d/total.svg" alt="Total Downloads"></a>
+  <a href="https://packagist.org/packages/bjthecod3r/laravel-cloudflare-stream"><img src="https://poser.pugx.org/bjthecod3r/laravel-cloudflare-stream/v/stable.svg" alt="Latest Version"></a>
+  <a href="https://github.com/BJTheCod3r/laravel-cloudflare-stream/blob/main/LICENSE.md"><img src="https://poser.pugx.org/bjthecod3r/laravel-cloudflare-stream/license.svg" alt="License"></a>
+</p>
+
+------
+
 # Laravel Cloudflare Stream
 
 A Laravel Package for working with Cloudflare Stream seamlessly

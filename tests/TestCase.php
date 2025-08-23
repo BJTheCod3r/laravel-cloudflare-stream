@@ -34,7 +34,6 @@ class TestCase extends OrchestraTestCase
      */
     protected function defineEnvironment($app): void
     {
-        $envVariables = [];  //$this->grabVariablesFromEnvFile();
         $envVariables['account_id'] = 'account_id';
         $envVariables['api_token'] = 'api_token';
         $envVariables['api_base_url'] = 'https://api.cloudflare.com/client/v4/accounts';
@@ -42,6 +41,8 @@ class TestCase extends OrchestraTestCase
         $envVariables['key_id'] = 'xxxxxxxxxxxxxxx';
         $envVariables['jwk_key'] = 'xxxxxxxxxxxxxxx';
         $envVariables['pem'] = 'xxxxxxxxxxxxxxx';
+
+//        $envVariables = $this->grabVariablesFromEnvFile();
 
         tap($app['config'], function (Repository $config) use ($envVariables) {
             $config->set('cloudflare-stream.api_token', $envVariables['api_token']);
