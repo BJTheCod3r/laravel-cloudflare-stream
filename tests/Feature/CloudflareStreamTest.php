@@ -13,6 +13,13 @@ class CloudflareStreamTest extends TestCase
 
     protected string $accountId;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->apiBaseUrl = config('cloudflare-stream.base_url');
+        $this->accountId = config('cloudflare-stream.account_id');
+    }
+
     /**
      * @return void
      */
@@ -289,10 +296,68 @@ class CloudflareStreamTest extends TestCase
         $this->assertEquals($fakeResponse['result']['token'], $response['result']['token']);
     }
 
-    protected function setUp(): void
+    public function test_can_find_exact_duplicates(): void
     {
-        parent::setUp();
-        $this->apiBaseUrl = config('cloudflare-stream.base_url');
-        $this->accountId = config('cloudflare-stream.account_id');
+        $id = 'orig123';
+        $name = 'some-videos';
+        $size = 1000;
+        $duration = 10;
+
+        $videoItem = [
+            'uid' => $id,
+            'meta' => ['name' => $name],
+            'size' => $size,
+            'duration' => $duration,
+        ];
+
+        $fetchUrl = "$this->apiBaseUrl/$this->accountId/stream/$id";
+        $listUrl = "$this->apiBaseUrl/$this->accountId/stream?" . http_build_query(['search' => $name]);
+
+        $listVideos = [
+            'result' => [
+                'videos' => [
+                    $videoItem,
+                    [
+                        'uid' => 'dup1',
+                        'meta' => ['name' => $name],
+                        'size' => $size,
+                        'duration' => $duration,
+                    ],
+                    [
+                        'uid' => 'nonmatch1',
+                        'meta' => ['name' => $name],
+                        'size' => $size + 1,
+                        'duration' => $duration,
+                    ],
+                    [
+                        'uid' => 'nonmatch2',
+                        'meta' => ['name' => 'different'],
+                        'size' => $size,
+                        'duration' => $duration,
+                    ],
+                ],
+            ],
+            'success' => true,
+            'errors' => [],
+            'messages' => [],
+        ];
+
+        $fetchResponse = [
+            'result' => $videoItem,
+            'success' => true,
+            'errors' => [],
+            'messages' => [],
+        ];
+
+        Http::fake([
+            $fetchUrl => Http::response($fetchResponse),
+            $listUrl => Http::response($listVideos),
+        ]);
+
+        $stream = new CloudflareStream();
+        $duplicates = $stream->findExactDuplicates($id);
+
+        $this->assertCount(1, $duplicates);
+        $this->assertEquals('dup1', $duplicates[0]['uid']);
     }
 }
