@@ -3,8 +3,6 @@
   "release-type": "php",
   "include-v-in-tag": true,
   "packages": {
-    ".": {
-      "package-name": "bjthecod3r/laravel-cloudflare-stream"
-    }
+    ".": {}
   }
 }
