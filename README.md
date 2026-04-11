@@ -79,6 +79,15 @@ gladly attend to it.
 
 Please feel free to fork this package and contribute by submitting a pull request to enhance the functionalities.
 
+## Releases
+
+GitHub releases are managed with Google's `release-please` action.
+
+- Merge conventional commits such as `fix:`, `feat:`, or `feat!:` into `main`.
+- `release-please` will open or update a Release PR with the next version and changelog changes.
+- Merging that Release PR creates the GitHub release and the next `v*` tag automatically.
+- If you want other workflows to run on Release PRs or release tags, add a `RELEASE_PLEASE_TOKEN` secret with a PAT; otherwise the workflow falls back to `GITHUB_TOKEN`.
+- In GitHub repo settings, enable `Settings > Actions > General > Allow GitHub Actions to create and approve pull requests`.
 
 ## License
 
