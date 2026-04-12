@@ -15,6 +15,8 @@
 
 A Laravel Package for working with Cloudflare Stream seamlessly
 
+Supports Laravel 10, 11, 12, and 13.
+
 ## Installation
 
 Run
@@ -40,7 +42,7 @@ Open your .env file and add the following variables, remember to substitute the 
 ```php
 CLOUDFLARE_API_TOKEN=xxxxxxxxxxxx
 CLOUDFLARE_ACCOUNT_ID=xxxxxxxxxxxxxxxxx
-CLOUDFLARE_BASE_API_URL=https://api.cloudflare.com/client/v4/accounts
+CLOUDFLARE_API_BASE_URL=https://api.cloudflare.com/client/v4/accounts
 CLOUDFLARE_KEY_ID=xxxxxxxxxxxxxxx
 ```
 
@@ -60,7 +62,7 @@ class StreamService
     
     public function fetchVideo(string $id): array
     {
-       return CloudflareStreamFacade::fetchVideo(string $id)
+        return CloudflareStreamFacade::fetchVideo($id);
     }
 }
 ```

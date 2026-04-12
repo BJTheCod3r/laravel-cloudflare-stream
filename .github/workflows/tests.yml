@@ -4,22 +4,54 @@ on:
   push:
     branches:
       - '*'
+  pull_request:
 
 jobs:
   test:
+    name: PHP ${{ matrix.php }} / Laravel ${{ matrix.laravel }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.1'
+            laravel: '^10.0'
+            testbench: '^8.0'
+            phpunit: '^10.5'
+          - php: '8.2'
+            laravel: '^11.0'
+            testbench: '^9.0'
+            phpunit: '^11.5'
+          - php: '8.2'
+            laravel: '^12.0'
+            testbench: '^10.0'
+            phpunit: '^11.5'
+          - php: '8.3'
+            laravel: '^13.0'
+            testbench: '^11.0'
+            phpunit: '^12.5'
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Resolve Laravel runtime dependency
+        run: composer require "illuminate/support:${{ matrix.laravel }}" --no-interaction --no-update
+
+      - name: Resolve Laravel test dependencies
+        run: composer require --dev "orchestra/testbench:${{ matrix.testbench }}" "phpunit/phpunit:${{ matrix.phpunit }}" --no-interaction --no-update
 
       - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist
+        run: composer update --no-interaction --prefer-dist --with-all-dependencies
 
       - name: Run PHPUnit Feature tests
         run: ./vendor/bin/phpunit --testsuite Feature

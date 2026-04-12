@@ -6,11 +6,9 @@
         "laravel",
         "Open Source",
         "stream",
-        "videos",
-        "Laravel 10"
+        "videos"
     ],
     "license": "MIT",
-    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Bjthecod3r\\CloudflareStream\\": "src/"
@@ -32,7 +30,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "illuminate/support": "^10.0 || ^11.0",
+        "illuminate/support": "^10.0 || ^11.0 || ^12.0 || ^13.0",
         "guzzlehttp/guzzle": "^7.0"
     },
     "extra": {
@@ -46,9 +44,9 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.0.0",
-        "mockery/mockery": "^1.3.0",
-        "orchestra/testbench": "^8.0"
+        "phpunit/phpunit": "^10.5 || ^11.5 || ^12.0 || ^13.0",
+        "mockery/mockery": "^1.6.10",
+        "orchestra/testbench": "^8.0 || ^9.0 || ^10.0 || ^11.0"
     },
     "scripts": {
         "post-autoload-dump": [
