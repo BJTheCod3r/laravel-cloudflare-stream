@@ -5,6 +5,7 @@ namespace Bjthecod3r\CloudflareStream\Tests\Feature;
 use Bjthecod3r\CloudflareStream\CloudflareStream;
 use Bjthecod3r\CloudflareStream\Params\VideoQueryParams;
 use Bjthecod3r\CloudflareStream\Tests\TestCase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 
 class CloudflareStreamTest extends TestCase
@@ -178,6 +179,33 @@ class CloudflareStreamTest extends TestCase
 
         $this->assertCount(3, $response['result']['videos']);
         $this->assertEquals($fakeResponse['result'], $response['result']);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_can_upload_video_file_successfully(): void
+    {
+        $url = "$this->apiBaseUrl/$this->accountId/stream";
+        $fakeResponse = $this->fakeUploadResponse();
+
+        Http::fake([
+            $url => Http::response($fakeResponse)
+        ]);
+
+        $file = UploadedFile::fake()->createWithContent('my-video.mp4', 'fake-video-content');
+
+        $stream = new CloudflareStream();
+        $response = $stream->upload($file);
+
+        Http::assertSent(function ($request) use ($url) {
+            return str_starts_with($request->url(), $url)
+                && $request->hasHeader('Content-Type')
+                && str_contains($request->header('Content-Type')[0], 'multipart/form-data');
+        });
+
+        $this->assertTrue($response['success']);
+        $this->assertNotEmpty($response['result']['uid']);
     }
 
     /**

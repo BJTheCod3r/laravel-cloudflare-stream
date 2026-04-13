@@ -4,6 +4,8 @@ namespace Bjthecod3r\CloudflareStream;
 
 use Bjthecod3r\CloudflareStream\Params\QueryParams;
 use Bjthecod3r\CloudflareStream\Params\VideoQueryParams;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -42,11 +44,6 @@ class CloudflareStream
      * @var string
      */
     private string $webhookSecret;
-
-    /**
-     * @var string
-     */
-    private string $jwkKey;
 
     /**
      * @var string
@@ -143,6 +140,24 @@ class CloudflareStream
         $this->http = Http::withHeaders([
             "Authorization" => "Bearer {$this->apiToken}"
         ]);
+    }
+
+    /**
+     * Upload a video file directly to Cloudflare Stream
+     * File must be smaller than 200 MB.
+     *
+     * @todo Implement TUS resumable uploads for files larger than 200 MB
+     *
+     * @param UploadedFile $file
+     * @return array
+     * @throws FileNotFoundException
+     */
+    public function upload(UploadedFile $file): array
+    {
+        return $this->http
+            ->attach('file', $file->get(), $file->getClientOriginalName())
+            ->post("{$this->baseUrl}/{$this->accountId}/stream")
+            ->json();
     }
 
     /**
@@ -378,16 +393,6 @@ class CloudflareStream
     public function getVerificationKeys(): array
     {
         return $this->http->post("{$this->baseUrl}/{$this->accountId}/stream/keys")->json();
-    }
-
-    /**
-     * Set the jwk Key
-     *
-     * @return void
-     */
-    private function setJwkKey(): void
-    {
-        $this->jwkKey = config('cloudflare-stream.jwk_key');
     }
 
     /**
