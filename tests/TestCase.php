@@ -39,7 +39,6 @@ class TestCase extends OrchestraTestCase
         $envVariables['api_base_url'] = 'https://api.cloudflare.com/client/v4/accounts';
         $envVariables['customer_domain'] = 'https://customer-xxxxxxxxxxxxx.cloudflarestream.com';
         $envVariables['key_id'] = 'xxxxxxxxxxxxxxx';
-        $envVariables['jwk_key'] = 'xxxxxxxxxxxxxxx';
         $envVariables['pem'] = 'xxxxxxxxxxxxxxx';
 
 //        $envVariables = $this->grabVariablesFromEnvFile();
@@ -50,7 +49,6 @@ class TestCase extends OrchestraTestCase
             $config->set('cloudflare-stream.base_url', $envVariables['api_base_url']);
             $config->set('cloudflare-stream.customer_domain', $envVariables['customer_domain']);
             $config->set('cloudflare-stream.key_id', $envVariables['key_id']);
-            $config->set('cloudflare-stream.jwk_key', $envVariables['jwk_key']);
             $config->set('cloudflare-stream.pem', $envVariables['pem']);
             $config->set('cloudflare-stream.default_options', [
                 'requireSignedURLs' => true,
