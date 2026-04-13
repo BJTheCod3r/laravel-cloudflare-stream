@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0](https://github.com/BJTheCod3r/laravel-cloudflare-stream/compare/v1.0.7...v1.1.0) (2026-04-13)
+
+
+### Features
+
+* **upload:** add direct file upload to Cloudflare Stream ([5f67fb7](https://github.com/BJTheCod3r/laravel-cloudflare-stream/commit/5f67fb7c3b87e49fa5645571283449eb9e055a03))
+* **upload:** add direct file upload to Cloudflare Stream ([1b4b0ae](https://github.com/BJTheCod3r/laravel-cloudflare-stream/commit/1b4b0ae9de12f0cdf734026e9bef2145d52fee0b))
+
 ## [1.0.7](https://github.com/BJTheCod3r/laravel-cloudflare-stream/compare/v1.0.6...v1.0.7) (2026-04-12)
 
 
